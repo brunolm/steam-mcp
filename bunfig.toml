@@ -1,0 +1,4 @@
+[install]
+# Supply-chain safety: refuse to install package versions published less than 3 days ago.
+# https://bun.com/docs/runtime/bunfig
+minimumReleaseAge = 259200  # 3 days, in seconds
