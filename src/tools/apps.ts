@@ -1,6 +1,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { config } from "../config.js";
+import { toHours, truncate, unixToDate } from "../format.js";
 import { steamApi, storeApi } from "../steam/client.js";
 import { jsonResult } from "./helpers.js";
 
@@ -158,10 +159,8 @@ export function registerAppTools(server: McpServer) {
         reviews: (data.reviews ?? []).slice(0, sampleSize).map((review) => ({
           voted_up: review.voted_up,
           votes_up: review.votes_up,
-          playtime_hours: Math.round(((review.author?.playtime_forever ?? 0) / 60) * 10) / 10,
-          posted: review.timestamp_created
-            ? new Date(review.timestamp_created * 1000).toISOString().slice(0, 10)
-            : undefined,
+          playtime_hours: toHours(review.author?.playtime_forever),
+          posted: unixToDate(review.timestamp_created),
           review: truncate(review.review, 800),
         })),
       });
@@ -215,7 +214,7 @@ export function registerAppTools(server: McpServer) {
           title: item.title,
           author: item.author,
           feed: item.feedlabel,
-          date: item.date ? new Date(item.date * 1000).toISOString().slice(0, 10) : undefined,
+          date: unixToDate(item.date),
           url: item.url,
           contents: truncate(item.contents, maxlength),
         })),
@@ -270,9 +269,4 @@ function formatCents(cents: number | undefined, currency: string | undefined): s
 
 function stripHtml(value: string | undefined): string | undefined {
   return value?.replace(/<[^>]*>/g, "").trim();
-}
-
-function truncate(value: string | undefined, max: number): string | undefined {
-  if (!value) return undefined;
-  return value.length > max ? `${value.slice(0, max)}…` : value;
 }

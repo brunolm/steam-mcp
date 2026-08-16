@@ -1,4 +1,5 @@
 import { config } from "../config.js";
+import { unixToDate } from "../format.js";
 import { steamApi } from "./client.js";
 
 export interface StoreItem {
@@ -66,9 +67,7 @@ export function summarizeStoreItem(item: StoreItem | undefined) {
     short_description: item.basic_info?.short_description,
     developers: item.basic_info?.developers?.map((d) => d.name),
     publishers: item.basic_info?.publishers?.map((p) => p.name),
-    release_date: item.release?.steam_release_date
-      ? new Date(item.release.steam_release_date * 1000).toISOString().slice(0, 10)
-      : undefined,
+    release_date: unixToDate(item.release?.steam_release_date),
     coming_soon: item.release?.is_coming_soon,
     is_free: item.is_free,
     price: price?.formatted_final_price,

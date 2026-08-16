@@ -2,8 +2,9 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { steamApi } from "../steam/client.js";
 import { resolveSteamId } from "../steam/steam-id.js";
-import { fetchStoreItems, summarizeStoreItem } from "../steam/store-items.js";
-import { jsonResult, steamIdParam, unixToDate } from "./helpers.js";
+import { type StoreItem, fetchStoreItems, summarizeStoreItem } from "../steam/store-items.js";
+import { unixToDate } from "../format.js";
+import { jsonResult, steamIdParam } from "./helpers.js";
 
 interface WishlistItem {
   appid: number;
@@ -53,7 +54,9 @@ export function registerWishlistTools(server: McpServer) {
 
       const page = items.slice(0, limit ?? 50);
       const details =
-        include_details === false ? new Map() : await fetchStoreItems(page.map((i) => i.appid));
+        include_details === false
+          ? new Map<number, StoreItem>()
+          : await fetchStoreItems(page.map((i) => i.appid));
 
       return jsonResult({
         steamid,

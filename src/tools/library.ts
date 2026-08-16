@@ -2,7 +2,8 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { steamApi } from "../steam/client.js";
 import { resolveSteamId } from "../steam/steam-id.js";
-import { jsonResult, steamIdParam, toHours, unixToDate } from "./helpers.js";
+import { toHours, unixToDate } from "../format.js";
+import { jsonResult, steamIdParam } from "./helpers.js";
 
 interface OwnedGame {
   appid: number;
